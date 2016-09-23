@@ -1,15 +1,18 @@
 <html>
 <head></head>
+<script src="https://code.jquery.com/jquery-3.1.1.slim.min.js"></script>
 <body>
-    <form action="http://10.100.101.74:4567/autoupdate" method="post">
-      <input  id="User ID" name="id" type="text" value="12" />
+    <form id="startform">
+      <input  id="User ID" name="id" type="text" value="" placeholder="User ID" required="true" />
       <input type="hidden" id="latitude" name="x" value="" />
       <input type="hidden" id="longitude" name="y" value="" />
       <input type="submit" value="Start" />
     </form>
+    <div id="map" style='width:500px; height:500px; display:none'></div>
 </body>
 <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
 <script>
+  var users=[], maphidden = true, markers = [];
     function getLocation() {
 
          var options = {
@@ -40,6 +43,60 @@
         $('#latitude').val(lat);
         $('#longitude').val(longi);
     }
-    getLocation();
-</script>
+    function postdata(){
+      $.post('/autoupdate', $('#startform').serialize(), function(data, status){
+        $("#startform").hide();
+        getUsers();
+      });
+    }
+
+    function getUsers() {
+      $.get('/users', function(data){
+        window.users = data;
+        showMap();
+      });
+    }
+
+    
+    $("#startform").submit(function(e){
+      e.preventDefault();
+      postdata();
+      setInterval(function() {
+        getLocation();
+        postdata();  
+      }, 1000);
+      return false;
+    });
+    
+
+      function showMap() {
+        if (maphidden) {
+          var map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 4,
+            center: {lat: parseFloat(users[0].x), lng: parseFloat(users[0].y)}
+          });  
+          $("#map").show();
+          maphidden = false;
+        }
+        for(marker in markers) {
+          marker.map = null;
+        }
+        markers = [];
+
+        for(i in users) {
+          user = users[i];
+          var marker = new google.maps.Marker({
+          position: {lat: parseFloat(user.x), lng:parseFloat(user.y)},
+          map: map,
+          title: "user" + user.id,
+          label: user.id
+        });  
+          markers.push(marker);
+        }
+        
+      }
+    </script>
+<script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCRRckyNOASemizowtX7hqkerHJSt2yhcc">
+    </script>
 </html>

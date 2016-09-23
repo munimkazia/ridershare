@@ -1,13 +1,13 @@
 require 'sinatra'
 require 'sinatra/json'
 # require 'geo-distance'
-
+move = 0.001
 
 users = []
 messages = []
 
 get '/' do
-	'Hello world!'
+	File.read('index.html')
 end
 
 get '/users' do
@@ -33,8 +33,9 @@ post '/autoupdate' do
 	users.each do |u|
 		if u[:id] == id then
 			old = true
-			u[:x] = x
-			u[:y] = y
+			u[:x] = x.to_f + move
+			u[:y] = y.to_f + move
+			move += 0.001
 			break	
 		end	
 	end
