@@ -1,0 +1,45 @@
+<html>
+<head></head>
+<body>
+    <form action="http://10.100.101.74:4567/autoupdate" method="post">
+      <input  id="User ID" name="id" type="text" value="12" />
+      <input type="hidden" id="latitude" name="x" value="" />
+      <input type="hidden" id="longitude" name="y" value="" />
+      <input type="submit" value="Start" />
+    </form>
+</body>
+<script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+<script>
+    function getLocation() {
+
+         var options = {
+            enableHighAccuracy: true,
+            timeout: 5000,
+            maximumAge: 0
+         };
+
+        function success(pos) {
+           successFunction(pos);
+        };
+
+        function error(err) {
+            console.warn('ERROR(' + err.code + '): ' + err.message);
+        };
+
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(success, error,options);
+        } else { 
+            //x.innerHTML = "Geolocation is not supported by this browser.";
+        }
+    }
+
+    function successFunction(position) {
+       var lat = position.coords.latitude;
+       var longi = position.coords.longitude;
+
+        $('#latitude').val(lat);
+        $('#longitude').val(longi);
+    }
+    getLocation();
+</script>
+</html>
