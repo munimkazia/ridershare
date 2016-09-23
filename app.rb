@@ -1,7 +1,6 @@
 require 'sinatra'
-require 'redis'
 require 'sinatra/json'
-require 'geo-distance'
+# require 'geo-distance'
 
 
 users = []
@@ -23,6 +22,23 @@ post '/message' do
 	id = params[:id]
 	message = params[:message]
 	messages << {:message_id => messages.length ,:user_id => id, :message => message }
+	json true
+end
+
+post '/autoupdate' do
+	id = params[:id]
+	x = params[:x]
+	y = params[:y]
+	old = false
+	users.each do |u|
+		if u[:id] == id then
+			old = true
+			u[:x] = x
+			u[:y] = y
+			break	
+		end	
+	end
+	users << {:id => id, :x => x, :y => y } if old == false
 	json true
 end
 
