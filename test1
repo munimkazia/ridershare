@@ -1,0 +1,11 @@
+<html>
+<head></head>
+<body>
+$(document).keypress(function (e) {
+if (e.which == 13) {
+alert('enter key is pressed');
+console.log('enter key is pressed');
+}
+});
+</script>
+</html>
