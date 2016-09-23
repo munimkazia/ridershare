@@ -7,7 +7,7 @@ users = []
 messages = []
 
 get '/' do
-	'Hello world!'
+	File.read('index.html')
 end
 
 get '/users' do
@@ -19,9 +19,9 @@ get '/messages' do
 end
 
 post '/message' do
-	id = params[:id]
+	userid = params[:userid]
 	message = params[:message]
-	messages << {:message_id => messages.length ,:user_id => id, :message => message }
+	messages << {:message_id => messages.length ,:user_id => userid, :message => message }
 	json true
 end
 
