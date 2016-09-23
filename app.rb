@@ -22,11 +22,13 @@ end
 post '/message' do
 	id = params[:id]
 	message = params[:message]
-	messages << {:id => id, :message => message }
+	messages << {:message_id => messages.length ,:user_id => id, :message => message }
 	json true
 end
 
 get '/distance' do
 	distances = []
-	json users.combination(2).to_a
+	users.combination(2).to_a.each do |u1,u2|
+		distances[]
+	end
 end
