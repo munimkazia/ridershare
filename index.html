@@ -3,41 +3,41 @@
 <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js"></script>
 <body>
     <form id="startform">
-      <input  id="User ID" name="id" type="text" value="" placeholder="User ID" required="true" />
+      <input  id="userid" name="id" type="text" value="" placeholder="User ID" required="true" />
       <input type="hidden" id="latitude" name="x" value="" />
       <input type="hidden" id="longitude" name="y" value="" />
       <input type="submit" value="Start" />
     </form>
 
     <div id="map" style='width:500px; height:500px; display:none'></div>
-    <div id="display" style="height:600px;width:1200px;overflow:auto;background-color:yellowgreen;color:white;scrollbar-base-color:gold;font-family:sans-serif;padding:10px;">
+    <div id="display" style="height:400px;width:500px;overflow:auto;background-color:yellowgreen;color:white;scrollbar-base-color:gold;font-family:sans-serif;padding:10px;">
     </div>
-    <input type="text" id="chater" name="chater" style="height:40px;width:1220px">
-    <input type="button" value="Submit" name="Submit" style="height:40px;width:40px" onclick="chatbox()">
+    <input type="text" id="chater" name="chater" style="height:40px;width:500px">
+    <input type="button" value="Submit" name="Submit" style="height:40px;width:60px" onclick="chatbox()">
     <script>
       function chatbox(){
-          var user_id = document.getElementById("User ID");
-          var chater = document.getElementById("chater");
+          var user_id = $("#userid").val();
+          var chater = $("#chater").val();
+          var chater1 = document.getElementById("chater");
           var display = document.getElementById("display");
 
-          postmessage(user_id, chater);
-          display.innerHTML = display.innerHTML + "<br>" + user_id.value + " ==>   " + chater.value;
-          chater.value=""
+          $.post('/message', {userid:user_id, message: chater}, function(data){
+            chater1.value =""
+          });
       }
-      function postmessage(user_id, chater){
-          var form_post = document.createElement("form_post");
-          form_post.setAttribute("method", "post");
-          form_post.setAttribute("action", "http://10.100.101.74:4567/users");
-          var hiddenField = document.createElement("input");
-          hiddenField.setAttribute("type", "hidden");
-          hiddenField.setAttribute("name", key);
-          hiddenField.setAttribute("value", params[key]);
-          document.body.appendChild(form_post);
-          form_post.submit;
-      }
-      function getmessage(){
 
+      function getmessage(){
+        $.get('/messages', function(data){
+          $("#display")[0].innerHTML = ""
+          for(i in data) {
+            message = data[i];
+            $("#display")[0].innerHTML += message.user_id + " -> " + message.message + "<br>"; 
+          }
+        })
       }
+      setInterval(function() {
+        getmessage()
+      }, 1000);
     </script>
 </body>
 <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
@@ -47,7 +47,7 @@
 
          var options = {
             enableHighAccuracy: true,
-            timeout: 5000,
+            timeout: 30000,
             maximumAge: 0
          };
 
